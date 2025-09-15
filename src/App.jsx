@@ -75,27 +75,30 @@ export default function App() {
     // --- Handlers ---
 
     const handleLogin = async (e) => {
-        e.preventDefault();
-        setError('');
-        try {
-            const response = await fetch(`${API_URL}/api/auth/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ password }),
-            });
-            if (!response.ok) {
-                throw new Error('Authentication failed');
-            }
-            // Assuming the backend returns a token or success message
-            const result = await response.json();
-            if(result.success) {
-                setIsAuthenticated(true);
-            }
-        } catch (loginError) {
-            setError('Incorrect password or server error.');
-            console.error('Login failed:', loginError);
-        }
-    };
+        e.preventDefault();
+        setError('');
+        try {
+            const response = await fetch(`${API_URL}/api/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password }),
+            });
+
+            // The key change: We await the JSON response regardless of the status.
+            const result = await response.json();
+
+            if (result.success) {
+                setIsAuthenticated(true);
+            } else {
+                // Display the specific error message from the backend
+                setError(result.message);
+            }
+        } catch (loginError) {
+            // This catch block now only handles network errors or JSON parsing issues
+            setError('Server error. Please try again later.');
+            console.error('Login failed:', loginError);
+        }
+    };
 
     const handleFileSelect = async (event) => {
         const file = event.target.files[0];
