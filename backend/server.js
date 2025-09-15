@@ -35,9 +35,10 @@ const createTransactionHash = (transaction) => {
 // Login Endpoint
 app.post('/api/auth/login', (req, res) => {
     const { password } = req.body;
-    // For this example, we'll use a simple hardcoded password.
-    // In a real application, you would use a secure authentication method.
-    const CORRECT_PASSWORD = process.env.LOGIN_PASSWORD || 'defaultpassword';
+    console.log("Received password:", password); // Add this line
+    console.log("Expected password:", process.env.LOGIN_PASSWORD); // Add this line
+
+    const CORRECT_PASSWORD = process.env.LOGIN_PASSWORD || 'password';
     if (password === CORRECT_PASSWORD) {
         return res.status(200).json({ success: true, message: 'Logged in successfully.' });
     }
