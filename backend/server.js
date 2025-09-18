@@ -14,7 +14,7 @@ app.use(express.json());
 
 // --- Supabase Client ---
 const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
+const supabaseKey = process.env.SUPABASE_SERVICE_KEY; // Use the service role key
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // --- File Upload Setup ---
@@ -67,7 +67,7 @@ app.get('/api/cost-centers', async (req, res) => {
 
 // GET All Mappings
 app.get('/api/mappings', async (req, res) => {
-    const { data, error } = await supabase.from('mappings').select('*');
+    const { data, error } = await supabase.from('mapping_templates').select('*');
     if (error) {
         console.error('Error fetching mappings:', error);
         return res.status(500).json({ error: error.message });
@@ -121,7 +121,7 @@ app.delete('/api/cost-centers/:name', async (req, res) => {
 // Add a New Mapping
 app.post('/api/mappings', async (req, res) => {
     const { name, fileType = 'CSV' } = req.body;
-    const { data, error } = await supabase.from('mappings').insert({ name, fileType, dateCreated: new Date().toISOString() }).select();
+    const { data, error } = await supabase.from('mapping_templates').insert({ name, fileType, dateCreated: new Date().toISOString() }).select();
     if (error) {
         console.error('Error adding mapping:', error);
         return res.status(500).json({ error: error.message });
@@ -132,7 +132,7 @@ app.post('/api/mappings', async (req, res) => {
 // Remove a Mapping
 app.delete('/api/mappings/:id', async (req, res) => {
     const { id } = req.params;
-    const { error } = await supabase.from('mappings').delete().eq('id', id);
+    const { error } = await supabase.from('mapping_templates').delete().eq('id', id);
     if (error) {
         console.error('Error removing mapping:', error);
         return res.status(500).json({ error: error.message });
